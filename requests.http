@@ -1,0 +1,32 @@
+### GET tutti i candidati
+GET http://localhost:8080/api/candidates
+
+
+### GET candidato per id
+GET http://localhost:8080/api/candidates/3
+
+
+### POST nuovo candidato
+POST http://localhost:8080/api/candidates
+Content-Type: application/json
+
+{
+  "name": "Danilo",
+  "email": "danilo@email.it",
+  "targetRole": "Java Developer"
+}
+
+
+### PUT modifica candidato
+PUT http://localhost:8080/api/candidates/3
+Content-Type: application/json
+
+{
+  "name": "Franco",
+  "email": "Danilo.il@lar.it",
+  "targetRole": "Full Stack Developer"
+}
+
+
+### DELETE candidato
+DELETE http://localhost:8080/api/candidates/3
