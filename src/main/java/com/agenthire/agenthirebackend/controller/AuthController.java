@@ -15,7 +15,8 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/auth")
 @CrossOrigin(origins = {
         "http://localhost:4200",
-        "https://agenthire-ai.vercel.app"
+        "https://agenthire-ai.vercel.app",
+        "https://agenthire-danilo.vercel.app"
 })
 public class AuthController {
 
@@ -29,6 +30,7 @@ public class AuthController {
     public ResponseEntity<UserResponse> register(
             @Valid @RequestBody RegisterRequest request
     ) {
+
         UserResponse userResponse = authService.register(request);
 
         return ResponseEntity
@@ -40,6 +42,7 @@ public class AuthController {
     public ResponseEntity<AuthResponse> login(
             @Valid @RequestBody LoginRequest request
     ) {
+
         AuthResponse authResponse = authService.login(request);
 
         return ResponseEntity.ok(authResponse);

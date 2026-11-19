@@ -12,7 +12,8 @@ import java.util.List;
 @RequestMapping("/api/candidates")
 @CrossOrigin(origins = {
         "http://localhost:4200",
-        "https://agenthire-ai.vercel.app"
+        "https://agenthire-ai.vercel.app",
+        "https://agenthire-danilo.vercel.app"
 })
 public class CandidateController {
 
