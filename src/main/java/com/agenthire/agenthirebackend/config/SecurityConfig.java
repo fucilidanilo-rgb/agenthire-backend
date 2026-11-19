@@ -1,8 +1,10 @@
+
 package com.agenthire.agenthirebackend.config;
 
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -24,21 +26,39 @@ public class SecurityConfig {
             throws Exception {
 
         http
+                // API REST con autenticazione JWT
                 .csrf(csrf -> csrf.disable())
 
+                // Nessuna sessione sul server
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(
                                 SessionCreationPolicy.STATELESS
                         )
                 )
 
-                .exceptionHandling(exception ->
-                        exception.authenticationEntryPoint(
+                // Gestione accessi non autorizzati
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint(
                                 (request, response, authException) -> {
-                                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                                    response.setStatus(
+                                            HttpServletResponse.SC_UNAUTHORIZED
+                                    );
                                     response.setContentType("application/json");
+                                    response.setCharacterEncoding("UTF-8");
                                     response.getWriter().write(
-                                            "{\"status\":401,\"error\":\"Unauthorized\",\"message\":\"Token mancante o non valido\"}"
+                                            "{\"status\":401,\"error\":\"Unauthorized\"}"
+                                    );
+                                }
+                        )
+                        .accessDeniedHandler(
+                                (request, response, accessDeniedException) -> {
+                                    response.setStatus(
+                                            HttpServletResponse.SC_FORBIDDEN
+                                    );
+                                    response.setContentType("application/json");
+                                    response.setCharacterEncoding("UTF-8");
+                                    response.getWriter().write(
+                                            "{\"status\":403,\"error\":\"Forbidden\"}"
                                     );
                                 }
                         )
@@ -46,19 +66,39 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(auth -> auth
 
+                        // Login consentito: account privati e DEMO
                         .requestMatchers(
-                                "/api/auth/register",
-                                "/api/auth/login",
-                                "/api/test"
+                                HttpMethod.POST, "/api/auth/login"
                         ).permitAll()
 
-                        .requestMatchers("/api/candidates/**")
-                        .authenticated()
+                        // Registrazione pubblica BLOCCATA
+                        .requestMatchers(
+                                HttpMethod.POST, "/api/auth/register"
+                        ).denyAll()
 
-                        .anyRequest()
-                        .authenticated()
+                        // Endpoint di verifica
+                        .requestMatchers(
+                                HttpMethod.GET, "/api/test"
+                        ).permitAll()
+
+                        // Lettura candidati: USER e DEMO
+                        .requestMatchers(
+                                HttpMethod.GET,
+                                "/api/candidates",
+                                "/api/candidates/**"
+                        ).hasAnyRole("USER", "DEMO")
+
+                        // Creazione, modifica, eliminazione: solo USER
+                        .requestMatchers(
+                                "/api/candidates",
+                                "/api/candidates/**"
+                        ).hasRole("USER")
+
+                        // Tutte le altre API richiedono autenticazione
+                        .anyRequest().authenticated()
                 )
 
+                // Verifica JWT prima dei filtri di autenticazione
                 .addFilterBefore(
                         jwtAuthenticationFilter,
                         UsernamePasswordAuthenticationFilter.class

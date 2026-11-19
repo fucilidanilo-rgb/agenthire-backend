@@ -1,3 +1,4 @@
+
 package com.agenthire.agenthirebackend.entity;
 
 import jakarta.persistence.*;
@@ -15,6 +16,11 @@ public class Candidate {
     private String email;
 
     private String targetRole;
+
+    // Utente proprietario del candidato
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "owner_id")
+    private AppUser owner;
 
     public Candidate() {
     }
@@ -51,5 +57,13 @@ public class Candidate {
 
     public void setTargetRole(String targetRole) {
         this.targetRole = targetRole;
+    }
+
+    public AppUser getOwner() {
+        return owner;
+    }
+
+    public void setOwner(AppUser owner) {
+        this.owner = owner;
     }
 }

@@ -1,3 +1,4 @@
+
 package com.agenthire.agenthirebackend.entity;
 
 import jakarta.persistence.*;
@@ -16,12 +17,16 @@ public class AppUser {
     @Column(nullable = false)
     private String password;
 
+    @Column(nullable = false)
+    private String role = "USER";
+
     public AppUser() {
     }
 
     public AppUser(String email, String password) {
         this.email = email;
         this.password = password;
+        this.role = "USER";
     }
 
     public Long getId() {
@@ -42,5 +47,13 @@ public class AppUser {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }
