@@ -26,6 +26,10 @@ public class SecurityConfig {
             throws Exception {
 
         http
+                // Abilita CORS utilizzando la configurazione
+                // @CrossOrigin dei controller
+                .cors(cors -> {})
+
                 // API REST con autenticazione JWT
                 .csrf(csrf -> csrf.disable())
 
@@ -66,12 +70,15 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(auth -> auth
 
-                        // Login consentito: account privati e DEMO
+                        // Consente le richieste preflight CORS
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
+                        // Login consentito
                         .requestMatchers(
                                 HttpMethod.POST, "/api/auth/login"
                         ).permitAll()
 
-                        // Registrazione pubblica BLOCCATA
+                        // Registrazione pubblica bloccata
                         .requestMatchers(
                                 HttpMethod.POST, "/api/auth/register"
                         ).denyAll()
@@ -88,7 +95,7 @@ public class SecurityConfig {
                                 "/api/candidates/**"
                         ).hasAnyRole("USER", "DEMO")
 
-                        // Creazione, modifica, eliminazione: solo USER
+                        // Scrittura candidati: solo USER
                         .requestMatchers(
                                 "/api/candidates",
                                 "/api/candidates/**"
@@ -98,7 +105,7 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
 
-                // Verifica JWT prima dei filtri di autenticazione
+                // Verifica JWT
                 .addFilterBefore(
                         jwtAuthenticationFilter,
                         UsernamePasswordAuthenticationFilter.class

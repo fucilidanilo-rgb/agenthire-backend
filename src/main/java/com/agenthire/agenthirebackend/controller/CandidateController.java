@@ -1,3 +1,4 @@
+
 package com.agenthire.agenthirebackend.controller;
 
 import com.agenthire.agenthirebackend.dto.CandidateDto;
@@ -9,7 +10,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/candidates")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = {
+        "http://localhost:4200",
+        "https://agenthire-ai.vercel.app"
+})
 public class CandidateController {
 
     private final CandidateService candidateService;

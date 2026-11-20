@@ -1,3 +1,4 @@
+
 package com.agenthire.agenthirebackend.controller;
 
 import com.agenthire.agenthirebackend.dto.AuthResponse;
@@ -12,7 +13,10 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = {
+        "http://localhost:4200",
+        "https://agenthire-ai.vercel.app"
+})
 public class AuthController {
 
     private final AuthService authService;
@@ -25,7 +29,6 @@ public class AuthController {
     public ResponseEntity<UserResponse> register(
             @Valid @RequestBody RegisterRequest request
     ) {
-
         UserResponse userResponse = authService.register(request);
 
         return ResponseEntity
@@ -37,7 +40,6 @@ public class AuthController {
     public ResponseEntity<AuthResponse> login(
             @Valid @RequestBody LoginRequest request
     ) {
-
         AuthResponse authResponse = authService.login(request);
 
         return ResponseEntity.ok(authResponse);
