@@ -1,3 +1,4 @@
+
 package com.agenthire.agenthirebackend.service;
 
 import com.agenthire.agenthirebackend.dto.AuthResponse;
@@ -74,7 +75,8 @@ public class AuthService {
         return new AuthResponse(
                 user.getId(),
                 user.getEmail(),
-                token
+                token,
+                user.getRole()
         );
     }
 }

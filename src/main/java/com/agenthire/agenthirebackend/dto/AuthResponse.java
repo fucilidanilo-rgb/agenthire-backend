@@ -1,3 +1,4 @@
+
 package com.agenthire.agenthirebackend.dto;
 
 public class AuthResponse {
@@ -5,11 +6,18 @@ public class AuthResponse {
     private Long id;
     private String email;
     private String token;
+    private String role;
 
-    public AuthResponse(Long id, String email, String token) {
+    public AuthResponse(
+            Long id,
+            String email,
+            String token,
+            String role
+    ) {
         this.id = id;
         this.email = email;
         this.token = token;
+        this.role = role;
     }
 
     public Long getId() {
@@ -22,5 +30,9 @@ public class AuthResponse {
 
     public String getToken() {
         return token;
+    }
+
+    public String getRole() {
+        return role;
     }
 }
