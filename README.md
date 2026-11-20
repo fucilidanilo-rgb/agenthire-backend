@@ -1,216 +1,370 @@
-# AgentHire Backend
 
-Backend REST API di **AgentHire AI**, un progetto portfolio pensato per gestire dati dei candidati e autenticazione attraverso un’architettura Spring Boot sicura.
+# 🤖 AgentHire AI — Backend Spring Boot
 
-Il progetto dimostra la realizzazione di un backend Java moderno con API REST, persistenza su database, validazione, gestione centralizzata degli errori, hashing delle password e autenticazione tramite JWT.
+**AgentHire Backend** è il servizio REST sviluppato in Java e Spring Boot per il progetto Full Stack AgentHire AI.
 
-## Tecnologie utilizzate
+Il backend gestisce l'autenticazione degli utenti, la sicurezza delle richieste HTTP, i ruoli applicativi e la persistenza dei candidati.
 
-- Java 21
-- Spring Boot 4
-- Spring Web
-- Spring Data JPA
-- Spring Security
-- Hibernate
-- MySQL
-- BCrypt
-- JWT (JSON Web Token)
-- Maven
-- Git / GitHub
+Il progetto è integrato con due frontend Angular e utilizza PostgreSQL su Neon come database cloud.
 
-## Funzionalità
+## 🌐 Applicazione online
 
-### Gestione candidati
+**Backend REST API**
 
-L’applicazione espone operazioni CRUD complete sui candidati:
+https://agenthire-backend-hxpv.onrender.com
 
-- Creazione di un candidato
-- Visualizzazione di tutti i candidati
-- Ricerca di un candidato per ID
-- Aggiornamento dei dati
-- Eliminazione di un candidato
+**Frontend Angular — Danilo**
 
-I dati principali gestiti sono:
+https://agenthire-danilo.vercel.app/home
 
-- Nome
-- Email
-- Ruolo desiderato
+**Frontend Angular — Roberta**
 
-## Autenticazione
+https://agenthire-ai.vercel.app/home
 
-Il backend comprende un flusso completo di autenticazione:
+### Account dimostrativo
 
-- Registrazione utente
-- Login
+Email: `demo@agenthire.example`
+
+Password: `AgentHire-Demo-2026!`
+
+L'account DEMO permette di accedere alle funzionalità dimostrative dell'applicazione.
+
+> Il backend utilizza Render Free. Dopo un periodo di inattività, il primo accesso può richiedere più tempo.
+
+---
+
+## 🛠️ Stack tecnologico
+
+| Categoria | Tecnologia |
+|---|---|
+| Linguaggio | Java 21 |
+| Framework | Spring Boot 4.1.1 |
+| API | Spring Web, REST |
+| Sicurezza | Spring Security |
+| Autenticazione | JWT |
+| Password | BCrypt |
+| Persistenza | Spring Data JPA |
+| ORM | Hibernate |
+| Database | PostgreSQL |
+| Hosting database | Neon |
+| Validazione | Jakarta Bean Validation |
+| Build | Maven |
+| Containerizzazione | Docker |
+| Hosting backend | Render |
+| Versionamento | Git e GitHub |
+
+---
+
+## ✨ Funzionalità
+
+### 1. Autenticazione utenti
+
+Il backend implementa un sistema di autenticazione con:
+
+- Login tramite email e password
+- Verifica delle credenziali
 - Hashing delle password con BCrypt
-- Generazione JWT
-- Validazione JWT
-- Endpoint protetti
+- Generazione di token JWT
+- Validazione dei token JWT
 - Autenticazione stateless
+- Protezione degli endpoint REST
 
 Le password non vengono memorizzate in chiaro nel database.
 
-## Sicurezza
+### 2. Ruoli applicativi
 
-Spring Security distingue tra endpoint pubblici ed endpoint protetti.
+Sono previsti due ruoli:
 
-Endpoint pubblici:
+**USER**
 
-```text
-POST /api/auth/register
-POST /api/auth/login
-GET  /api/test
-```
+Account personale con accesso alle funzionalità autorizzate.
 
-Endpoint protetti:
+**DEMO**
 
-```text
-GET    /api/candidates
-GET    /api/candidates/{id}
-POST   /api/candidates
-PUT    /api/candidates/{id}
-DELETE /api/candidates/{id}
-```
+Account dimostrativo con permessi limitati.
 
-Per accedere agli endpoint protetti è necessario inviare il JWT tramite header HTTP:
+La gestione dei permessi viene effettuata lato backend tramite Spring Security.
 
-```text
-Authorization: Bearer <token>
-```
+### 3. Gestione candidati
 
-Se il token è assente, non valido o scaduto, il backend restituisce una risposta HTTP `401 Unauthorized`.
+Il backend espone API REST per la gestione dei candidati.
 
-## Validazione
+Le operazioni CRUD comprendono:
 
-I dati ricevuti dalle API vengono validati tramite Jakarta Validation.
+- Creazione di un candidato
+- Recupero dell'elenco dei candidati
+- Ricerca di un candidato tramite ID
+- Aggiornamento dei dati
+- Eliminazione di un candidato
 
-Alcuni controlli implementati:
+I dati principali comprendono:
 
-- Nome obbligatorio
-- Email obbligatoria
-- Formato email valido
-- Ruolo desiderato obbligatorio
-- Credenziali di login obbligatorie
-- Lunghezza minima della password
+- Nome
+- Email
+- Ruolo professionale desiderato
 
-In caso di dati non validi, il backend restituisce `400 Bad Request`.
+Le operazioni sono sottoposte ai controlli di autenticazione e autorizzazione.
 
-## Gestione degli errori
+### 4. Separazione dei dati
 
-Il progetto utilizza un `GlobalExceptionHandler` per gestire gli errori dell’applicazione in modo centralizzato.
+La gestione dei candidati è collegata all'identità dell'utente autenticato.
+
+Gli utenti accedono ai candidati secondo i controlli di proprietà e autorizzazione implementati nel backend.
+
+Il ruolo DEMO dispone di permessi limitati sulle operazioni di modifica.
+
+### 5. Validazione
+
+Il backend utilizza Jakarta Bean Validation per controllare i dati ricevuti.
+
+Sono previsti controlli su:
+
+- Campi obbligatori
+- Formato degli indirizzi email
+- Dati dei candidati
+- Credenziali di accesso
+- Requisiti delle password
+
+Le richieste non valide vengono gestite con risposte HTTP appropriate.
+
+### 6. Gestione centralizzata degli errori
+
+Il progetto include un GlobalExceptionHandler per gestire le eccezioni applicative.
 
 Tra i casi gestiti:
 
-- Candidato non trovato
+- Dati non validi
 - Credenziali errate
-- Errori di validazione
-- Accesso non autorizzato
+- Candidato non trovato
+- Richieste non autorizzate
+- Operazioni non consentite
 
-Esempio di risposta:
+---
 
-```json
-{
-  "status": 401,
-  "error": "Unauthorized",
-  "message": "Token non valido o scaduto"
-}
-```
+## 🏗️ Architettura
 
-## Architettura del progetto
-
-Il backend segue una struttura a livelli:
+Il progetto utilizza un'architettura a livelli.
 
 ```text
-Controller
-   ↓
-Service
-   ↓
-Repository
-   ↓
-Database
-```
-
-Package principali:
-
-```text
-config/
-controller/
-dto/
-entity/
-exception/
-repository/
-service/
+           FRONTEND ANGULAR
+                 |
+                 | HTTPS / REST
+                 | JWT Bearer
+                 v
+           SPRING BOOT
+               Render
+                 |
+                 v
+             Security
+           JWT / BCrypt
+                 |
+                 v
+             Controller
+                 |
+                 v
+               DTO
+                 |
+                 v
+              Service
+                 |
+                 v
+             Repository
+                 |
+                 v
+          JPA / Hibernate
+                 |
+                 v
+            PostgreSQL
+                Neon
 ```
 
 ### Controller
 
-Riceve le richieste HTTP ed espone gli endpoint REST.
+Espone gli endpoint HTTP e gestisce le richieste dei client.
 
 ### Service
 
-Contiene la logica applicativa e coordina le operazioni tra controller e repository.
+Contiene la logica applicativa relativa ad autenticazione e gestione dei candidati.
 
 ### Repository
 
-Gestisce l’accesso al database tramite Spring Data JPA.
+Gestisce l'accesso al database attraverso Spring Data JPA.
 
 ### Entity
 
-Rappresenta le tabelle del database.
+Rappresenta le entità persistenti del sistema.
 
 ### DTO
 
-Rappresenta i dati scambiati tramite API e permette di separare i dati esposti all’esterno dalle entity del database.
+Definisce i dati scambiati attraverso le API e separa le informazioni esposte dalle entità persistenti.
 
-## Flusso di autenticazione JWT
+### Config e Security
+
+Comprende le configurazioni di Spring Security, autenticazione JWT e autorizzazioni.
+
+---
+
+## 🔐 Sicurezza e JWT
+
+Il backend utilizza Spring Security con autenticazione stateless.
+
+### Flusso di autenticazione
 
 ```text
-Login utente
-    ↓
+Utente
+   |
+   v
+POST /api/auth/login
+   |
+   v
 Verifica credenziali
-    ↓
-Controllo password con BCrypt
-    ↓
+   |
+   v
+BCrypt Password Check
+   |
+   v
 Generazione JWT
-    ↓
-Token restituito al client
-    ↓
-Authorization: Bearer <JWT>
-    ↓
+   |
+   v
+Token restituito al frontend
+   |
+   v
+Richiesta con Bearer Token
+   |
+   v
 JwtAuthenticationFilter
-    ↓
-Validazione del token
-    ↓
-Accesso all'endpoint protetto
+   |
+   v
+Verifica token e autorizzazioni
+   |
+   v
+Accesso alla risorsa protetta
 ```
 
-## Database
+### Esempio header HTTP
 
-Il progetto utilizza MySQL.
-
-Tabelle principali:
-
-```text
-candidates
-users
+```http
+Authorization: Bearer <JWT>
 ```
 
-La persistenza è gestita tramite Hibernate e Spring Data JPA.
+Il backend verifica la validità del token prima di autorizzare l'accesso agli endpoint protetti.
 
-## Variabili d’ambiente
+### Registrazione pubblica
 
-Le informazioni sensibili non vengono salvate direttamente nel codice sorgente.
+La registrazione pubblica è disabilitata tramite la configurazione Spring Security.
 
-L’applicazione utilizza le seguenti variabili d’ambiente:
+Gli account autorizzati vengono predisposti separatamente.
 
-```text
-DB_URL
-DB_USERNAME
-DB_PASSWORD
-JWT_SECRET
+---
+
+## 🌐 API REST
+
+### Autenticazione
+
+| Metodo | Endpoint | Accesso |
+|---|---|---|
+| POST | `/api/auth/login` | Pubblico |
+| POST | `/api/auth/register` | Bloccato nella configurazione pubblica |
+
+### Gestione candidati
+
+| Metodo | Endpoint | Accesso |
+|---|---|---|
+| GET | `/api/candidates` | USER / DEMO |
+| GET | `/api/candidates/{id}` | USER / DEMO |
+| POST | `/api/candidates` | USER |
+| PUT | `/api/candidates/{id}` | USER |
+| DELETE | `/api/candidates/{id}` | USER |
+
+Il backend applica inoltre controlli di proprietà dei dati.
+
+### Endpoint di test
+
+```http
+GET /api/test
 ```
 
-Configurazione utilizzata:
+### Esempio di login
+
+Richiesta:
+
+```http
+POST /api/auth/login
+Content-Type: application/json
+```
+
+Body di esempio:
+
+```json
+{
+  "email": "demo@agenthire.example",
+  "password": "AgentHire-Demo-2026!"
+}
+```
+
+La risposta contiene:
+
+- ID utente
+- Email
+- Token JWT
+- Ruolo applicativo
+
+Esempio semplificato:
+
+```json
+{
+  "id": 1,
+  "email": "demo@agenthire.example",
+  "token": "<JWT>",
+  "role": "DEMO"
+}
+```
+
+---
+
+## 🗄️ Database PostgreSQL — Neon
+
+Il database cloud è ospitato su Neon.
+
+La persistenza utilizza:
+
+- PostgreSQL
+- Spring Data JPA
+- Hibernate
+- Driver JDBC PostgreSQL
+
+Le principali entità persistenti comprendono gli utenti e i candidati.
+
+### Configurazione Hibernate
+
+```properties
+spring.jpa.hibernate.ddl-auto=validate
+spring.jpa.show-sql=false
+spring.jpa.open-in-view=false
+```
+
+La modalità `validate` verifica la compatibilità dello schema del database con le entità JPA.
+
+### Migrazione database
+
+Il progetto utilizzava inizialmente MySQL durante lo sviluppo.
+
+La configurazione cloud attuale è stata migrata a PostgreSQL su Neon.
+
+---
+
+## ⚙️ Variabili d'ambiente
+
+L'applicazione utilizza le seguenti variabili:
+
+| Variabile | Descrizione |
+|---|---|
+| `DB_URL` | URL JDBC PostgreSQL |
+| `DB_USERNAME` | Username database |
+| `DB_PASSWORD` | Password database |
+| `JWT_SECRET` | Segreto per la firma JWT |
+
+Configurazione Spring Boot:
 
 ```properties
 spring.datasource.url=${DB_URL}
@@ -220,113 +374,146 @@ spring.datasource.password=${DB_PASSWORD}
 jwt.secret=${JWT_SECRET}
 ```
 
-Le credenziali del database e la secret JWT non devono essere pubblicate su GitHub.
+**Importante:** le credenziali del database e il segreto JWT devono rimanere privati e non devono essere pubblicati su GitHub.
 
-## Avvio del progetto
+---
 
-Clonare il repository:
+## 💻 Installazione locale
+
+### Requisiti
+
+- Java 21
+- IntelliJ IDEA o editor equivalente
+- Maven Wrapper
+- PostgreSQL configurato
+- Variabili d'ambiente necessarie
+
+### 1. Clonare il repository
 
 ```bash
 git clone https://github.com/fucilidanilo-rgb/agenthire-backend.git
 ```
 
-Entrare nella cartella:
+### 2. Entrare nella cartella
 
 ```bash
 cd agenthire-backend
 ```
 
-Configurare le variabili d’ambiente necessarie:
+### 3. Configurare le variabili d'ambiente
+
+Impostare:
 
 ```text
-DB_URL=jdbc:mysql://localhost:3306/agenthire
-DB_USERNAME=tuo_username_mysql
-DB_PASSWORD=tua_password_mysql
-JWT_SECRET=tua_secret_jwt
+DB_URL
+DB_USERNAME
+DB_PASSWORD
+JWT_SECRET
 ```
 
-Avviare quindi l’applicazione Spring Boot.
+Il database deve contenere lo schema previsto dalle entità JPA.
 
-Il backend sarà disponibile su:
+### 4. Avviare Spring Boot
 
-```text
+Su Windows:
+
+```powershell
+.\mvnw.cmd spring-boot:run
+```
+
+Su macOS/Linux:
+
+```bash
+./mvnw spring-boot:run
+```
+
+Il backend locale utilizza normalmente:
+
 http://localhost:8080
-```
 
-## Esempio di login
+---
 
-Richiesta:
+## 🐳 Docker e deployment
 
-```http
-POST /api/auth/login
-Content-Type: application/json
-```
+Il progetto include un Dockerfile per distribuire il backend come container.
 
-Body:
+L'infrastruttura pubblicata comprende:
 
-```json
-{
-  "email": "user@example.com",
-  "password": "your-password"
-}
-```
+| Componente | Servizio |
+|---|---|
+| Frontend Angular Danilo | Vercel |
+| Frontend Angular Roberta | Vercel |
+| Backend Java Spring Boot | Render |
+| Database PostgreSQL | Neon |
+| Codice sorgente | GitHub |
 
-Risposta:
+Entrambi i frontend utilizzano lo stesso backend REST e lo stesso database cloud.
 
-```json
-{
-  "id": 1,
-  "email": "user@example.com",
-  "token": "eyJ..."
-}
-```
+---
 
-Il token restituito può poi essere utilizzato per accedere agli endpoint protetti.
+## 🔗 Repository collegati
 
-## Competenze messe in pratica
+### Backend Spring Boot
 
-Durante lo sviluppo di questo progetto ho lavorato su:
+https://github.com/fucilidanilo-rgb/agenthire-backend
 
-- Creazione di API REST con Spring Boot
-- Architettura Controller / Service / Repository
-- Utilizzo di DTO ed Entity
-- Operazioni CRUD con Spring Data JPA
-- Collegamento Java e MySQL
-- Validazione dei dati
-- Gestione centralizzata delle eccezioni
-- Hashing delle password con BCrypt
-- Configurazione di Spring Security
+### Frontend Angular — Danilo
+
+https://github.com/fucilidanilo-rgb/agenthire-ai
+
+### Frontend Angular — Roberta
+
+https://github.com/robertabianca92/agenthire-ai
+
+---
+
+## 🎯 Competenze dimostrate
+
+- Java 21
+- Programmazione orientata agli oggetti
+- Spring Boot
+- API REST
+- Spring Security
 - Autenticazione JWT
-- Protezione degli endpoint
-- Codici di stato HTTP
-- Variabili d’ambiente
-- Gestione sicura dei segreti
+- BCrypt
+- DTO e validazione
+- Controller / Service / Repository
+- Spring Data JPA
+- Hibernate
+- PostgreSQL
+- Gestione dei permessi
+- Gestione delle eccezioni
+- Docker
+- Render
+- Neon
 - Git e GitHub
 
-## Stato del progetto
+---
 
-Backend core completato.
+## 👥 Collaborazione
 
-Funzionalità attualmente disponibili:
+Il progetto AgentHire AI integra due frontend Angular sviluppati separatamente e un backend Spring Boot condiviso.
 
-- CRUD candidati
-- Persistenza MySQL
-- DTO
-- Validazione
-- Global Exception Handler
-- Registrazione utente
-- Login
-- Password BCrypt
-- JWT
-- Endpoint protetti
-- Configurazione tramite variabili d’ambiente
+**Danilo Fucile**
 
-Prossimo step: integrazione completa con il frontend Angular di **AgentHire AI**.
+Backend Development e Full Stack Integration
 
-## Autore
+GitHub: https://github.com/fucilidanilo-rgb
+
+**Roberta Bianca**
+
+Collaborazione al progetto AgentHire AI e sviluppo frontend.
+
+GitHub: https://github.com/robertabianca92
+
+---
+
+## 👨‍💻 Autore
 
 **Danilo Fucili**
 
 Junior Full Stack Developer
 
-Java · Spring Boot · Angular · TypeScript · SQL
+Java · Spring Boot · Angular · TypeScript · PostgreSQL
+
+GitHub: https://github.com/fucilidanilo-rgb
